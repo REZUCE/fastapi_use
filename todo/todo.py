@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Path
 from todo.schema import TodoPostSchema, TodoItemUpdateSchema
 
-todo_router = APIRouter()
+todo_router = APIRouter(tags=["Todo CRUD"])
 
 todo_list = []
 

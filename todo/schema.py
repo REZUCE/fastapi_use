@@ -6,20 +6,23 @@ from pydantic import BaseModel
 #     status: str
 
 
-class TodoSchema(BaseModel):
-    """
-    {
-        "id": 1,
-        "item": {
-            "item": "Nested models",
-            "Status": "completed"
-        }
-    }
-    """
+class TodoItemUpdateSchema(BaseModel):
+    item: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "item": "Example: Read the next chapter of the book"
+                }
+            ]
+        }}
+
+
+class TodoPostSchema(BaseModel):
     id: int
     item: str
 
-    # Можно добавить вот такой пример request body.
     model_config = {
         "json_schema_extra": {
             "examples": [

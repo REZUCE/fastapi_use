@@ -1,5 +1,5 @@
 .env
-venv
-.idea
-/.venv
-__pycache__/
+/venv/
+/.idea/
+/.venv/
+/__pycache__/

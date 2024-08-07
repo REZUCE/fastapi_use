@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
 
-class Item(BaseModel):
-    item: str
-    status: str
+# class Item(BaseModel):
+#
+#     status: str
 
 
 class TodoSchema(BaseModel):
@@ -17,4 +17,4 @@ class TodoSchema(BaseModel):
     }
     """
     id: int
-    item: Item
+    item: str

@@ -8,6 +8,7 @@ todo_list = []
 
 @todo_router.post("/todo")
 async def add_todo(todo: TodoSchema) -> dict:
+    # Важно помнить, что есть еще класс Body.
     todo_list.append(todo)
     return {"message": "Todo added successfully"}
 

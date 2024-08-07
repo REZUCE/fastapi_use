@@ -1,21 +1,23 @@
-from fastapi import APIRouter, Path
-from todo.schema import TodoPostSchema, TodoItemUpdateSchema
+from fastapi import APIRouter, Path, HTTPException, status
+from todo.schema import TodoSchema, TodoItemSchema, TodoItemsSchema
 
 todo_router = APIRouter(tags=["Todo CRUD"])
 
 todo_list = []
 
 
-@todo_router.post("/todo")
-async def add_todo(todo: TodoPostSchema) -> dict:
+### По умолчанию 200 статус код!!!
+
+@todo_router.post("/todo", status_code=status.HTTP_201_CREATED)
+async def add_todo(todo: TodoSchema) -> dict:
     # Важно помнить, что есть еще класс Body.
     todo_list.append(todo)
     return {"message": "Todo added successfully"}
 
 
-@todo_router.get("/todo")
+@todo_router.get("/todo", response_model=TodoItemsSchema)
 async def retrieve_todos() -> dict:
-    return {"todo": todo_list}
+    return {"todos": todo_list}
 
 
 @todo_router.get("/todo/{todo_id}")
@@ -25,14 +27,15 @@ async def get_single_todo(todo_id: int = Path(..., description="The ID of the to
             return {
                 "todo": todo
             }
-    return {
-        "message": "Todo with supplied ID doesn't exist."
-    }
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Todo with supplied ID doesn't exist",
+    )
 
 
 @todo_router.put("/todo/{todo_id}")
 async def update_todo(
-        todo_data: TodoItemUpdateSchema,
+        todo_data: TodoItemSchema,
         todo_id: int = Path(..., description="The ID of the todo to be updated")
 ) -> dict:
     for todo in todo_list:
@@ -41,9 +44,10 @@ async def update_todo(
         return {
             "message": "Todo updated successfully."
         }
-    return {
-        "message": "Todo with supplied ID doesn't exist."
-    }
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Todo with supplied ID doesn't exist",
+    )
 
 
 @todo_router.delete("/todo/{todo_id}")
@@ -56,9 +60,10 @@ async def delete_single_todo(todo_id: int) -> dict:
             return {
                 "message": "Todo deleted successfully."
             }
-    return {
-        "message": "Todo with supplied ID doesn't exist."
-    }
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Todo with supplied ID doesn't exist",
+    )
 
 
 @todo_router.delete("/todo")

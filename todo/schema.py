@@ -20,10 +20,12 @@ class TodoSchema(BaseModel):
     item: str
 
     # Можно добавить вот такой пример request body.
-    class Config:
-        Schema_extra = {
-            "Example": {
-                "id": 1,
-                "item": "Example schema!"
-            }
-        }
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id": 1,
+                    "item": "Example schema!"
+                }
+            ]
+        }}

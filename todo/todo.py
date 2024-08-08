@@ -1,32 +1,53 @@
-from fastapi import APIRouter, Path, HTTPException, status
+from fastapi import APIRouter, Path, HTTPException, status, Depends, Request
+# from starlette.templating import _TemplateResponse
+
 from todo.schema import TodoSchema, TodoItemSchema, TodoItemsSchema
+from fastapi.templating import Jinja2Templates
 
 todo_router = APIRouter(tags=["Todo CRUD"])
 
 todo_list = []
 
+templates = Jinja2Templates(directory="templates/")
+
 
 ### По умолчанию 200 статус код!!!
 
 @todo_router.post("/todo", status_code=status.HTTP_201_CREATED)
-async def add_todo(todo: TodoSchema) -> dict:
-    # Важно помнить, что есть еще класс Body.
+async def add_todo(request: Request, todo: TodoSchema = Depends(TodoSchema.as_form)):
+    todo.id = len(todo_list) + 1  # Якобы сами генерируем index.
     todo_list.append(todo)
-    return {"message": "Todo added successfully"}
+    return templates.TemplateResponse(
+        "todo.html", context=
+        {
+            "request": request,
+            "todos": todo_list
+        })
 
 
 @todo_router.get("/todo", response_model=TodoItemsSchema)
-async def retrieve_todos() -> dict:
-    return {"todos": todo_list}
+async def retrieve_todos(request: Request):
+    return templates.TemplateResponse(
+        "todo.html", context=
+        {
+            "request": request,
+            "todos": todo_list
+        })
 
 
 @todo_router.get("/todo/{todo_id}")
-async def get_single_todo(todo_id: int = Path(..., description="The ID of the todo to retrieve.")) -> dict:
+async def get_single_todo(
+        request: Request,
+        todo_id: int = Path(..., description="The ID of the todo to retrieve.")
+):
     for todo in todo_list:
         if todo.id == todo_id:
-            return {
-                "todo": todo
-            }
+            return templates.TemplateResponse(
+                "todo.html", context=
+                {
+                    "request": request,
+                    "todo": todo
+                })
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Todo with supplied ID doesn't exist",

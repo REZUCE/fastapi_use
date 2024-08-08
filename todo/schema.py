@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from fastapi import Form
+from typing import Optional
 
 
 # class Item(BaseModel):
@@ -39,8 +41,15 @@ class TodoItemsSchema(BaseModel):
 
 
 class TodoSchema(BaseModel):
-    id: int
+    id: int | None = None
     item: str
+
+    @classmethod
+    def as_form(
+            cls,
+            item: str = Form(...)
+    ):
+        return cls(item=item)
 
     model_config = {
         "json_schema_extra": {
@@ -51,3 +60,5 @@ class TodoSchema(BaseModel):
                 }
             ]
         }}
+
+

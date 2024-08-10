@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class EventSchema(BaseModel):
@@ -9,20 +9,21 @@ class EventSchema(BaseModel):
     tags: list[str]
     location: str
 
-    model_config = {
-        "json_schema_extra": {
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
             "examples": [
                 {
                     "id": 1,
-                    "title": "FastAPI Book Launch",
+                    "title": "Презентация книги по FastAPI",
                     "image": "https://linktomyimage.com/image.png",
-                    "description": "We will be discussing the contents of the FastAPI book in this event.Ensure to come with your own copy to win gifts!",
-                    "tags": ["python", "fastapi", "book", "launch"],
+                    "description": "На этом мероприятии мы будем обсуждать содержимое книги по FastAPI. Обязательно возьмите с собой свою копию, чтобы выиграть призы!",
+                    "tags": ["python", "fastapi", "книга", "презентация"],
                     "location": "Google Meet"
                 }
             ]
         }
-    }
+    )
 
 
 class EventCreateSchema(BaseModel):

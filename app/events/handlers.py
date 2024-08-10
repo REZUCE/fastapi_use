@@ -12,24 +12,15 @@ event_router = APIRouter(
 )
 
 
-@event_router.put("/{event_id}", response_model=EventSchema)
-async def update_event(
-        event_service: Annotated[EventService, Depends(get_event_service)],
-        event_id: int,
-        body: EventUpdateSchema = Body(...),
-) -> EventSchema:
+@event_router.get("/", response_model=list[EventSchema])
+async def retrieve_all_events(
+        event_service: Annotated[EventService, Depends(get_event_service)]
+) -> list[EventSchema]:
     try:
-        return await event_service.update_event(event_id=event_id, body=body)
-    except EventNotFoundException as e:
-        # Todo: потестить вызов.
+        return await event_service.list_event()
+    except EventsNotFoundTableException as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=e
-        )
-    except EventNotUpdateException as e:
-        # Todo: потестить вызов.
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
             detail=e
         )
 
@@ -45,10 +36,9 @@ async def retrieve_event_by_id(
     try:
         return await event_service.get_event(event_id=event_id)
     except EventNotFoundException as e:
-        # Todo: потестить вызов.
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=e
+            detail=str(e)
         )
         # raise HTTPException(
         #     status_code=status.HTTP_404_NOT_FOUND,
@@ -56,21 +46,28 @@ async def retrieve_event_by_id(
         # )
 
 
-@event_router.post(
-    "/",
-    status_code=status.HTTP_201_CREATED
-)
-async def create_event(
+@event_router.put("/edit/{event_id}", response_model=EventSchema)
+async def update_event(
         event_service: Annotated[EventService, Depends(get_event_service)],
-        body: EventCreateSchema = Body(...)
-) -> dict:
-    await event_service.create_event(body=body)
-    return {
-        "message": "Event created successfully"
-    }
+        event_id: int,
+        body: EventUpdateSchema = Body(...),
+) -> EventSchema:
+    try:
+        return await event_service.update_event(event_id=event_id, body=body)
+    except EventNotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+
+    except EventNotUpdateException as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
+        )
 
 
-@event_router.delete("/{event_id}")
+@event_router.delete("delete/{event_id}")
 async def delete_event(
         event_service: Annotated[EventService, Depends(get_event_service)],
         event_id: int
@@ -81,24 +78,9 @@ async def delete_event(
             "message": "Event deleted successfully"
         }
     except EventNotFoundException as e:
-        # Todo: потестить вызов.
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=e
-        )
-
-
-@event_router.get("/", response_model=list[EventSchema])
-async def retrieve_all_events(
-        event_service: Annotated[EventService, Depends(get_event_service)]
-) -> list[EventSchema]:
-    try:
-        return await event_service.list_event()
-    except EventsNotFoundTableException as e:
-        # Todo: потестить вызов.
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=e
+            detail=str(e)
         )
 
 
@@ -114,5 +96,19 @@ async def delete_all_events(
     except EventsNotFoundTableException as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=e
+            detail=str(e)
         )
+
+
+@event_router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED
+)
+async def create_event(
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        body: EventCreateSchema = Body(...)
+) -> dict:
+    await event_service.create_event(body=body)
+    return {
+        "message": "Event created successfully"
+    }

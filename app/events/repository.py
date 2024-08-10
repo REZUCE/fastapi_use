@@ -3,13 +3,12 @@ from dataclasses import dataclass
 
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import select, delete, insert, func, update
+from sqlalchemy import select, delete, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exception import EventNotFoundException, EventsNotFoundTableException, EventNotUpdateException
 from app.events.models import Events
 from app.events.schemas import EventCreateSchema, EventUpdateSchema
-from app.infrastructure.accessor import Database
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ class EventRepository:
         )
         async with self.db_session as session:
             try:
-                result: list[Events] = await session.execute(query).scalars().all()
+                result = (await session.execute(query)).scalars().all()
                 if not result:
                     # Если ни одна строка не была удалена, событие не найдено.
                     raise EventsNotFoundTableException
@@ -62,7 +61,7 @@ class EventRepository:
         query = (select(Events).where(Events.id == event_id))
         async with self.db_session as session:
             try:
-                result: Events = await session.execute(query).scalar_one_or_none()
+                result = (await session.execute(query)).scalar_one_or_none()
                 if not result:
                     # Если ни одна строка не была удалена, событие не найдено.
                     raise EventNotFoundException
@@ -108,6 +107,7 @@ class EventRepository:
                 )
 
     async def update_event(self, event_id: int, update_data: EventUpdateSchema) -> Events:
+        # Todo: можно сделать один запрос, как в delete.
         query = select(Events).where(Events.id == event_id)
         update_query = (
             update(Events)
@@ -129,16 +129,6 @@ class EventRepository:
                     raise EventNotUpdateException
                 return updated_event
 
-                # Проверка существования события
-                # Обновление события
-
-                result = await session.execute(query)
-                await session.commit()
-
-                updated_event = result.scalar_one_or_none()
-                if not updated_event:
-                    raise EventNotFoundException
-                return updated_event
             except SQLAlchemyError as e:
                 logging.error(f"An error occurred while updating the resume rating: {e}")
                 raise HTTPException(

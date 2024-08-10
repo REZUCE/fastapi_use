@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 import logging
 from app.events.schemas import EventCreateSchema, EventSchema, EventUpdateSchema

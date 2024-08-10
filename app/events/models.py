@@ -13,7 +13,7 @@ class Events(Base):
     location: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def __str__(self) -> str:
-        return f"<{self.__class__.__name__}(id={self.id}, candidate_name={self.title!r}, file_path={self.description[:20]!r}, rating={self.location[:20]!r})>"
+        return f"<{self.__class__.__name__}(id={self.id}, title={self.title!r}, description={self.description[:20]!r}, location={self.location[:20]!r})>"
 
     def __repr__(self) -> str:
         return self.__str__()

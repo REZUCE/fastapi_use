@@ -1,11 +1,11 @@
 from pydantic import BaseModel, EmailStr
-from models.events import Event
+from app.events.schemas import EventSchema
 
 
-class User(BaseModel):
+class UserSchema(BaseModel):
     email: EmailStr
     username: str
-    events: list[Event] | None = None
+    events: list[EventSchema] | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -19,7 +19,7 @@ class User(BaseModel):
     }
 
 
-class NewUser(User):
+class NewUserSchema(UserSchema):
     password: str
 
     model_config = {
@@ -35,7 +35,7 @@ class NewUser(User):
     }
 
 
-class UserSignIn(BaseModel):
+class UserSignInSchema(BaseModel):
     email: EmailStr
     password: str
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from models.users import User, UserSignIn, NewUser
+from app.users.schemas import UserSignInSchema, NewUserSchema
 
 user_router = APIRouter(
     tags=["User"]
@@ -9,7 +9,7 @@ users = {}
 
 
 @user_router.post("/signup")
-async def sign_new_user(data: NewUser) -> dict:
+async def sign_new_user(data: NewUserSchema) -> dict:
     if data.email in users:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -22,7 +22,7 @@ async def sign_new_user(data: NewUser) -> dict:
 
 
 @user_router.post("/signin")
-async def sign_user_in(user: UserSignIn) -> dict:
+async def sign_user_in(user: UserSignInSchema) -> dict:
     if user.email not in users:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

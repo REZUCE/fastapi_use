@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exception import EventNotFoundException, EventsNotFoundTableException, EventNotUpdateException
 from app.events.models import Events
 from app.events.schemas import EventCreateSchema, EventUpdateSchema
+from app.infrastructure.accessor import Database
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ class EventRepository:
         query = insert(Events).values(
             **event_data.dict(exclude_none=True)  # Убирает поля, где будет None.
         )
-        async with self.db_session.get_session() as session:
+        async with self.db_session as session:
             try:
                 await session.execute(query)
                 await session.commit()  # Todo: Как я понимаю можно в целом это не писать.
@@ -43,7 +44,7 @@ class EventRepository:
         query = (
             select(Events)
         )
-        async with self.db_session.get_session() as session:
+        async with self.db_session as session:
             try:
                 result: list[Events] = await session.execute(query).scalars().all()
                 if not result:
@@ -59,7 +60,7 @@ class EventRepository:
 
     async def get_event(self, event_id: int) -> Events:
         query = (select(Events).where(Events.id == event_id))
-        async with self.db_session.get_session() as session:
+        async with self.db_session as session:
             try:
                 result: Events = await session.execute(query).scalar_one_or_none()
                 if not result:
@@ -75,7 +76,7 @@ class EventRepository:
 
     async def delete_event(self, event_id: int) -> None:
         query = delete(Events).where(Events.id == event_id)
-        async with self.db_session.get_session() as session:
+        async with self.db_session as session:
             try:
                 result = await session.execute(query)
                 await session.commit()
@@ -91,7 +92,7 @@ class EventRepository:
 
     async def delete_all_events(self) -> None:
         query = delete(Events)
-        async with self.db_session.get_session() as session:
+        async with self.db_session as session:
             try:
                 # Удаление всех событий
                 result = await session.execute(query)
@@ -127,7 +128,6 @@ class EventRepository:
                 if not updated_event:
                     raise EventNotUpdateException
                 return updated_event
-
 
                 # Проверка существования события
                 # Обновление события

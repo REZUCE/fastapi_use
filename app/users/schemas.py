@@ -19,7 +19,8 @@ class UserSchema(BaseModel):
     }
 
 
-class UserCreateSchema(UserSchema):
+class UserCreateSchema(BaseModel):
+    email: EmailStr
     password: str
 
     model_config = {
@@ -28,7 +29,6 @@ class UserCreateSchema(UserSchema):
                 {
                     "email": "fastapi@packt.com",
                     "password": "strong!!!",
-                    "username": "example",
                 }
             ]
         }

@@ -27,6 +27,6 @@ async def home():
 
 if __name__ == "__main__":
     if settings.ENVIRONMENT == 'dev':
-        uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True, proxy_headers=True, forwarded_allow_ips='*')
+        uvicorn.run("main:app", host="0.0.0.0", port=8030, reload=True, proxy_headers=True, forwarded_allow_ips='*')
     else:
         uvicorn.run("main:app", host="0.0.0.0", port=80, proxy_headers=True, forwarded_allow_ips='*')

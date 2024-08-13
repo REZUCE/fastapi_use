@@ -3,6 +3,6 @@
 - [x] Сделать service Events - Важно учитывать вложенность Pydantic
 - [x] Сделать handlers Events
 
-- [] Сделать repository Users
-- [] Сделать service Users - Важно учитывать вложенность Pydantic
+- [x] Сделать repository Users
+- [x] Сделать service Users - Важно учитывать вложенность Pydantic
 - [] Сделать handlers Users

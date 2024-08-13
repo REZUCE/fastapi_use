@@ -65,6 +65,3 @@ class Database:
         finally:
             await session.commit()
             await session.close()
-
-
-database = Database(settings.DATABASE_URL, settings.DATABASE_URL)

@@ -10,9 +10,9 @@ sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 from app.infrastructure.database import Base
 from app.core.settings import settings
 
-# Чтобы alembic знал за какой модель следить.
+# Чтобы alembic знал за какими моделями следить.
 
-from app.events.models import Events
+from app.infrastructure.all_tables import all_models  # noqa: F401
 
 config = context.config
 

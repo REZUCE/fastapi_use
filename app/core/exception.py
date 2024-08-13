@@ -36,6 +36,19 @@ class EventNotUpdateException(Exception):
     def __str__(self):
         return self.message
 
+
+class UserAlreadyExistsException(Exception):
+    """
+    Raised when event not found.
+    """
+
+    def __init__(self, message: str = "User already exists with this email"):
+        self.message = message
+        super().__init__(message)
+
+    def __str__(self):
+        return self.message
+
     # detail = "Event not found"
 
 # class EventNotExistsIDException(Exception):

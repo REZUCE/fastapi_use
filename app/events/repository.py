@@ -49,6 +49,7 @@ class EventRepository:
                 if not result:
                     # Если ни одна строка не была удалена, событие не найдено.
                     raise EventsNotFoundTableException
+                # Todo: Посмотреть попозже почему тут не правильный тип данных.
                 return result
             except SQLAlchemyError as e:
                 logger.error(f"An error occurred while listing resumes: {e}")

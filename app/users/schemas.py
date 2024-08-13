@@ -19,7 +19,7 @@ class UserSchema(BaseModel):
     }
 
 
-class NewUserSchema(UserSchema):
+class UserCreateSchema(UserSchema):
     password: str
 
     model_config = {

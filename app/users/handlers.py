@@ -1,5 +1,11 @@
-from fastapi import APIRouter, HTTPException, status
-from app.users.schemas import UserSignInSchema, NewUserSchema
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, status, Body, Depends
+
+from app.core.exception import UserAlreadyExistsException
+from app.dependency import get_user_service
+from app.users.schemas import UserSignInSchema, UserCreateSchema
+from app.users.service import UserService
 
 user_router = APIRouter(
     tags=["User"]
@@ -9,16 +15,19 @@ users = {}
 
 
 @user_router.post("/signup")
-async def sign_new_user(data: NewUserSchema) -> dict:
-    if data.email in users:
+async def sign_new_user(
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        body: UserCreateSchema = Body(...)
+) -> dict:
+    try:
+        await user_service.create_user(body)
+        return {
+            "message": "User successfully registered!"
+        }
+    except UserAlreadyExistsException as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User with supplied email already exists"
-        )
-    users[data.email] = data
-    return {
-        "message": "User successfully registered!"
-    }
+            detail=str(e))
 
 
 @user_router.post("/signin")

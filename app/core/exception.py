@@ -49,6 +49,33 @@ class UserAlreadyExistsException(Exception):
     def __str__(self):
         return self.message
 
+
+# Todo: обработать в handlers
+class TokenNotCorrectException(Exception):
+    """
+    Raised when event not found.
+    """
+
+    def __init__(self, message: str = "Token is not correct"):
+        self.message = message
+        super().__init__(message)
+
+    def __str__(self):
+        return self.message
+
+
+class TokenExpireExtension(Exception):
+    """
+    Raised when event not found.
+    """
+
+    def __init__(self, message: str = "Token has expired"):
+        self.message = message
+        super().__init__(message)
+
+    def __str__(self):
+        return self.message
+
     # detail = "Event not found"
 
 # class EventNotExistsIDException(Exception):

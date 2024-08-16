@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class Token(BaseModel):
+class UserLoginSchema(BaseModel):
     access_token: str
-    token_type: str
+    user_id: int
